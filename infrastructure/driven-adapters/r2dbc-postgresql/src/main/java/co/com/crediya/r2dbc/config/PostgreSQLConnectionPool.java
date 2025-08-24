@@ -20,11 +20,11 @@ public class PostgreSQLConnectionPool {
 	public ConnectionPool getConnectionConfig() {
         // TODO: change these properties for yours
 		PostgresqlConnectionProperties pgProperties = new PostgresqlConnectionProperties();
-		pgProperties.setDatabase("postgres");
+		pgProperties.setDatabase("db_crediya_solicitud");
 		pgProperties.setHost("localhost");
 		pgProperties.setPort(5432);
-		pgProperties.setUsername("postgres");
-		pgProperties.setPassword("secret");
+		pgProperties.setUsername("admin");
+		pgProperties.setPassword("admin");
 		pgProperties.setSchema("public");
 
 		return buildConnectionConfiguration(pgProperties);
