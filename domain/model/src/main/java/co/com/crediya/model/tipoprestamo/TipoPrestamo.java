@@ -14,10 +14,10 @@ import java.math.BigDecimal;
 @Builder(toBuilder = true)
 public class TipoPrestamo {
 
-    private Integer id_tipo_prestamo;
+    private Integer idTipoPrestamo;
     private String nombre;
-    private BigDecimal monto_minimo;
-    private BigDecimal monto_maximo;
-    private BigDecimal tasa_interes;
-    private Boolean validacion_automatica;
+    private BigDecimal montoMinimo;
+    private BigDecimal montoMaximo;
+    private BigDecimal tasaInteres;
+    private Boolean validacionAutomatica;
 }

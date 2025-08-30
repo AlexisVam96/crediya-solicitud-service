@@ -5,5 +5,5 @@ import reactor.core.publisher.Mono;
 
 public interface TipoPrestamoRepository {
 
-    Mono<TipoPrestamo> findById(Integer id);
+    Mono<TipoPrestamo> findByIdTipoPrestamo(Integer id);
 }

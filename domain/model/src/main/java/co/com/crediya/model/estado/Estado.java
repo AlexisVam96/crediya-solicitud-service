@@ -12,7 +12,7 @@ import lombok.Setter;
 @Builder(toBuilder = true)
 public class Estado {
 
-    private Integer id_estado;
+    private Integer idEstado;
     private String nombre;
     private String descripcion;
 }
