@@ -4,6 +4,7 @@ import co.com.crediya.model.estado.gateways.EstadoRepository;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
+import co.com.crediya.model.user.gateway.ExternalUserGateway;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,30 +15,26 @@ public class SolicitudUseCase {
     private final SolicitudRepository solicitudRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
     private final EstadoRepository estadoRepository;
+    private final ExternalUserGateway externalUserGateway;
 
     public Flux<Solicitud> getAllSolicitudes() {
         return solicitudRepository.findAll();
     }
 
-    public Mono<Solicitud> saveSolicitud(Solicitud solicitud) {
-        return solicitudRepository.save(solicitud);
-    }
-
-    public Mono<Solicitud> findSolicitudById(Integer id) {
-        return solicitudRepository.findById(id);
-    }
-
     public Mono<Solicitud> createSolicitud(Solicitud solicitud) {
-        // Validate loan type exists
-        return tipoPrestamoRepository.findById(solicitud.getId_tipo_prestamo())
+        return externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
+                .switchIfEmpty(Mono.error(new IllegalArgumentException("User not found for document number")))
+                .flatMap(user -> {
+                    solicitud.setDocumentNumber(user.getDocumentNumber());
+                    return tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo());
+                })
                 .switchIfEmpty(Mono.error(new IllegalArgumentException("Invalid loan type")))
                 .flatMap(tipoPrestamo ->
-                        // Set initial state to "Pendiente de revisión"
                         estadoRepository.findByNombre("Pendiente de revisión")
                 )
                 .switchIfEmpty(Mono.error(new IllegalStateException("Initial state not found")))
                 .flatMap(estado -> {
-                    solicitud.setId_estado(estado.getId_estado());
+                    solicitud.setIdEstado(estado.getIdEstado());
                     return solicitudRepository.save(solicitud);
                 });
     }
