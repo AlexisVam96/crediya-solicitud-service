@@ -9,6 +9,7 @@ import co.com.crediya.r2dbc.entity.TipoPrestamoEntity;
 import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class TipoPrestamoReactiveRepositoryAdapter extends ReactiveAdapterOperations<TipoPrestamo, TipoPrestamoEntity, Integer, TipoPrestamoReactiveRepository>
@@ -23,4 +24,8 @@ public class TipoPrestamoReactiveRepositoryAdapter extends ReactiveAdapterOperat
         super(repository, mapper, d -> mapper.map(d, TipoPrestamo.class));
     }
 
+    @Override
+    public Mono<TipoPrestamo> findByIdTipoPrestamo(Integer id) {
+        return repository.findByIdTipoPrestamo(id);
+    }
 }

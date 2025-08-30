@@ -1,28 +1,36 @@
 package co.com.crediya.r2dbc.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "tipo_prestamo_entity")
 public class TipoPrestamoEntity {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer id_tipo_prestamo;
+    @Column("id_tipo_prestamo")
+    private Integer idTipoPrestamo;
     private String nombre;
-    private BigDecimal monto_minimo;
-    private BigDecimal monto_maximo;
-    private BigDecimal tasa_interes;
-    private Boolean validacion_automatica;
+
+    @Column("monto_minimo")
+    private BigDecimal montoMinimo;
+
+    @Column("monto_maximo")
+    private BigDecimal montoMaximo;
+
+    @Column("tasa_interes")
+    private BigDecimal tasaInteres;
+
+    @Column("validacion_automatica")
+    private Boolean validacionAutomatica;
 }

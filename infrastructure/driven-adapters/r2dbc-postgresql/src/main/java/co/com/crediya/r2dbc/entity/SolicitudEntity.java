@@ -2,11 +2,12 @@ package co.com.crediya.r2dbc.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.relational.core.mapping.Column;
+import org.springframework.data.relational.core.mapping.Table;
 
 import java.math.BigDecimal;
 
@@ -19,11 +20,19 @@ public class SolicitudEntity {
 
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private Integer id_solicitud;
+    @Column("id_solicitud")
+    private Integer idSolicitud;
+
     private BigDecimal monto;
     private Integer plazo;
     private String email;
-    private Integer id_estado;
-    private Integer id_tipo_prestamo;
+
+    @Column("id_estado")
+    private Integer idEstado;
+
+    @Column("id_tipo_prestamo")
+    private Integer idTipoPrestamo;
+
+    private String documentNumber;
 
 }

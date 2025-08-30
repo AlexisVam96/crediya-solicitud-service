@@ -9,6 +9,7 @@ import co.com.crediya.r2dbc.entity.SolicitudEntity;
 import co.com.crediya.r2dbc.helper.ReactiveAdapterOperations;
 import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.stereotype.Repository;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class EstadoReactiveRepositoryAdapter extends ReactiveAdapterOperations<Estado, EstadoEntity, Integer, EstadoReactiveRepository>
@@ -23,4 +24,8 @@ public class EstadoReactiveRepositoryAdapter extends ReactiveAdapterOperations<E
         super(repository, mapper, d -> mapper.map(d, Estado.class));
     }
 
+    @Override
+    public Mono<Estado> findByNombre(String nombre) {
+        return repository.findByNombre(nombre);
+    }
 }
