@@ -1,6 +1,8 @@
 package co.com.crediya.usecase.solicitud;
 
 import co.com.crediya.model.estado.gateways.EstadoRepository;
+import co.com.crediya.model.exception.ErrorType;
+import co.com.crediya.model.exception.LoanApplicationCustomerException;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
@@ -23,7 +25,7 @@ public class SolicitudUseCase {
 
     public Mono<Solicitud> createSolicitud(Solicitud solicitud) {
         return externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
-                .switchIfEmpty(Mono.error(new IllegalArgumentException("User not found for document number")))
+                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("User's document number not found", ErrorType.NOT_FOUND)))
                 .flatMap(user -> {
                     solicitud.setDocumentNumber(user.getDocumentNumber());
                     return tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo());
