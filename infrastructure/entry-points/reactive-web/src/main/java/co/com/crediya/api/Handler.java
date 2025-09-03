@@ -1,5 +1,6 @@
 package co.com.crediya.api;
 
+import co.com.crediya.api.dto.CreateSolicitudDto;
 import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.api.mapper.SolicitudDtoMapper;
 import co.com.crediya.model.solicitud.Solicitud;
@@ -25,7 +26,7 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(SolicitudDto.class)
+        return serverRequest.bodyToMono(CreateSolicitudDto.class)
                 .map(solicitudDtoMapper::toModel)
                 .flatMap(solicitudUseCase::createSolicitud)
                 .map(solicitudDtoMapper::toResponse)

@@ -24,9 +24,13 @@ public class RestConsumer implements ExternalUserGateway {
                 .uri("/api/v1/user/{documentNumber}", documentNumber)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError,
-                        error -> Mono.error(new LoanApplicationCustomerException("Client error when fetching user by document number", ErrorType.NOT_FOUND)))
+                        error -> Mono.error(new LoanApplicationCustomerException(
+                                "Client error - User's document number not found at path: " +
+                                error.request().getURI(), ErrorType.NOT_FOUND)))
                 .onStatus(HttpStatusCode::is5xxServerError,
-                        error -> Mono.error(new LoanApplicationCustomerException("Server error when fetching user by document number", ErrorType.SYSTEM)))
+                        error -> Mono.error(new LoanApplicationCustomerException(
+                                "Server error - when fetching user by document number at path: " +
+                                error.request().getURI(), ErrorType.SYSTEM)))
                 .bodyToMono(User.class);
     }
 

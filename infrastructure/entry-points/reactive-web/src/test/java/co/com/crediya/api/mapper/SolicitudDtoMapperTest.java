@@ -1,5 +1,6 @@
 package co.com.crediya.api.mapper;
 
+import co.com.crediya.api.dto.CreateSolicitudDto;
 import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.model.solicitud.Solicitud;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ class SolicitudDtoMapperTest {
 
     @Test
     void toModel_shouldMapCreateUserDtoToUser() {
-        SolicitudDto dto = new SolicitudDto();
+        CreateSolicitudDto dto = new CreateSolicitudDto();
         dto.setIdSolicitud(1);
         dto.setDocumentNumber("76584321");
         dto.setEmail("john.doe@example.com");

@@ -1,5 +1,6 @@
 package co.com.crediya.api;
 
+import co.com.crediya.api.dto.CreateSolicitudDto;
 import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.api.mapper.SolicitudDtoMapper;
 import co.com.crediya.model.solicitud.Solicitud;
@@ -77,7 +78,7 @@ class RouterRestTest {
         SolicitudDto dto = solicitudDto();
         Solicitud solicitud = solicitud();
 
-        when(solicitudDtoMapper.toModel(any(SolicitudDto.class))).thenReturn(solicitud);
+        when(solicitudDtoMapper.toModel(any(CreateSolicitudDto.class))).thenReturn(solicitud);
         when(solicitudUseCase.createSolicitud(any(Solicitud.class))).thenReturn(Mono.just(solicitud));
         when(solicitudDtoMapper.toResponse(any(Solicitud.class))).thenReturn(dto);
 

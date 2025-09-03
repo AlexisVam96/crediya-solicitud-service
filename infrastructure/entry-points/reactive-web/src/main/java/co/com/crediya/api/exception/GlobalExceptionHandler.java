@@ -42,6 +42,9 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
     }
 
     private HttpStatus mapToHttpStatus(ErrorType error) {
+        if(error == null){
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
         return switch (error) {
             case VALIDATION -> HttpStatus.BAD_REQUEST;
             case NOT_FOUND  -> HttpStatus.NOT_FOUND;
