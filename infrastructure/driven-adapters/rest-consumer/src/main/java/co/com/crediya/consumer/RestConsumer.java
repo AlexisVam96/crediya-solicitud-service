@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class RestConsumer implements ExternalUserGateway {
     private final WebClient client;
 
-    @CircuitBreaker(name = "findByDocumentNumber", fallbackMethod = "testGetOk")
+    @CircuitBreaker(name = "findByDocumentNumber")
     public Mono<User> findByDocumentNumber(String documentNumber) {
         return client
                 .get()
