@@ -16,7 +16,8 @@ import reactor.core.publisher.Mono;
 public class RestConsumer implements ExternalUserGateway {
     private final WebClient client;
 
-    @CircuitBreaker(name = "findByDocumentNumber", fallbackMethod = "testGetUserOk")
+    @Override
+    @CircuitBreaker(name = "findByDocumentNumber")
     public Mono<User> findByDocumentNumber(String documentNumber) {
         return client
                 .get()
@@ -29,13 +30,10 @@ public class RestConsumer implements ExternalUserGateway {
                 .bodyToMono(User.class);
     }
 
-    public Mono<User> testGetUserOk(String documentNumber, Throwable throwable) {
-        User defaultUser = User.builder()
-                .documentNumber(documentNumber)
-                .name("Default")
-                .email("default@example.com")
-                .role("USER")
-                .build();
-        return Mono.just(defaultUser);
+    public Mono<User> testGetOk(String documentNumber, Throwable throwable) {
+        User user = new User();
+        user.setDocumentNumber(documentNumber);
+        user.setEmail("example@crediya.com");
+        return Mono.just(user);
     }
 }
