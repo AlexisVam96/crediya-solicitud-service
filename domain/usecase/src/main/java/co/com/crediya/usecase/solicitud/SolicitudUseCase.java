@@ -3,6 +3,7 @@ package co.com.crediya.usecase.solicitud;
 import co.com.crediya.model.estado.gateways.EstadoRepository;
 import co.com.crediya.model.exception.ErrorType;
 import co.com.crediya.model.exception.LoanApplicationCustomerException;
+import co.com.crediya.model.security.JwtAuthenticationGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
@@ -29,6 +30,8 @@ public class SolicitudUseCase {
 
     private final ExternalUserGateway externalUserGateway;
 
+    private final JwtAuthenticationGateway jwtAuthenticationGateway;
+
     public Flux<Solicitud> getAllSolicitudes() {
         log.info("SolicitudUseCase.getAllSolicitudes: Starting getAllSolicitudes for solicitud");
         return transactionManager.doInTransaction(solicitudRepository.findAll());
@@ -36,20 +39,29 @@ public class SolicitudUseCase {
 
     public Mono<Solicitud> createSolicitud(Solicitud solicitud) {
         log.info("SolicitudUseCase.createSolicitud: Starting createSolicitud for solicitud " + solicitud);
-        return transactionManager.doInTransaction(externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
-                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("User not found for document number", ErrorType.NOT_FOUND)))
-                .flatMap(user -> {
-                    solicitud.setDocumentNumber(user.getDocumentNumber());
-                    return tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo());
-                })
-                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Invalid loan type", ErrorType.VALIDATION)))
-                .flatMap(tipoPrestamo ->
-                        estadoRepository.findByNombre("Pendiente de revisión")
-                )
-                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Initial state not found", ErrorType.VALIDATION)))
-                .flatMap(estado -> {
-                    solicitud.setIdEstado(estado.getIdEstado());
-                    return solicitudRepository.save(solicitud);
-                }));
+
+
+        return jwtAuthenticationGateway.getCurrentEmail()
+                .flatMap(email -> {
+                    if (!email.equals(solicitud.getEmail())) {
+                        return Mono.error(new LoanApplicationCustomerException("The email token is different from loan application email", ErrorType.VALIDATION));
+                    }
+                    // Solo si el token es válido, inicia la transacción
+                    return transactionManager.doInTransaction(
+                            externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
+                                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("User not found for document number", ErrorType.NOT_FOUND)))
+                                .flatMap(user -> {
+                                    solicitud.setDocumentNumber(user.getDocumentNumber());
+                                    return tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo());
+                                })
+                                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Invalid loan type", ErrorType.VALIDATION)))
+                                .flatMap(tipoPrestamo -> estadoRepository.findByNombre("Pendiente de revisión"))
+                                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Initial state not found", ErrorType.VALIDATION)))
+                                .flatMap(estado -> {
+                                    solicitud.setIdEstado(estado.getIdEstado());
+                                    return solicitudRepository.save(solicitud);
+                                })
+                    );
+                });
     }
 }

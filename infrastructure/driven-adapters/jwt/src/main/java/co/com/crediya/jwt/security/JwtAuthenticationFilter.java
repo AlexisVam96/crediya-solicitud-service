@@ -1,4 +1,4 @@
-package co.com.crediya.api.security;
+package co.com.crediya.jwt.security;
 
 import co.com.crediya.model.exception.ErrorType;
 import co.com.crediya.model.exception.LoanApplicationCustomerException;
