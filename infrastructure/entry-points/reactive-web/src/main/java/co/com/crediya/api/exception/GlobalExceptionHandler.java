@@ -49,6 +49,7 @@ public class GlobalExceptionHandler extends AbstractErrorWebExceptionHandler {
             case VALIDATION -> HttpStatus.BAD_REQUEST;
             case NOT_FOUND  -> HttpStatus.NOT_FOUND;
             case AUTH       -> HttpStatus.UNAUTHORIZED;
+            case FORBIDDEN  -> HttpStatus.FORBIDDEN;
             default         -> HttpStatus.INTERNAL_SERVER_ERROR;
         };
 

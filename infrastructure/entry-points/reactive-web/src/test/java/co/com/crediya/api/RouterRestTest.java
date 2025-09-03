@@ -60,7 +60,7 @@ class RouterRestTest {
 
         // Act & Assert
         webTestClient.get()
-                .uri("/api/v1/solicitudes")
+                .uri("/api/v1/solicitud")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
                 .expectStatus().isOk()
@@ -83,7 +83,7 @@ class RouterRestTest {
         when(solicitudDtoMapper.toResponse(any(Solicitud.class))).thenReturn(dto);
 
         webTestClient.post()
-                .uri("/api/v1/solicitudes")
+                .uri("/api/v1/solicitud")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(dto)
                 .exchange()

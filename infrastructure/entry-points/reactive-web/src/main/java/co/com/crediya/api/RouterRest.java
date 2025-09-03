@@ -28,7 +28,7 @@ public class RouterRest {
     @Bean
     @RouterOperations({
             @RouterOperation(
-                    path = "/api/v1/solicitudes",
+                    path = "/api/v1/solicitud",
                     method = RequestMethod.GET,
                     beanClass = Handler.class,
                     beanMethod = "listenGETUseCase",
@@ -41,7 +41,7 @@ public class RouterRest {
                     )
             ),
             @RouterOperation(
-                    path = "/api/v1/solicitudes",
+                    path = "/api/v1/solicitud",
                     method = RequestMethod.POST,
                     beanClass = Handler.class,
                     beanMethod = "listenPOSTUseCase",
@@ -95,7 +95,7 @@ public class RouterRest {
             )
     })
     public RouterFunction<ServerResponse> routerFunction(Handler handler) {
-        return route(GET("/api/v1/solicitudes"), handler::listenGETUseCase)
-                .andRoute(POST("/api/v1/solicitudes"), handler::listenPOSTUseCase);
+        return route(GET("/api/v1/solicitud"), handler::listenGETUseCase)
+                .andRoute(POST("/api/v1/solicitud"), handler::listenPOSTUseCase);
     }
 }
