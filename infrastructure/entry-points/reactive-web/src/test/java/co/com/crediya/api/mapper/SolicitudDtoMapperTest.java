@@ -22,6 +22,7 @@ class SolicitudDtoMapperTest {
         dto.setIdSolicitud(1);
         dto.setDocumentNumber("76584321");
         dto.setEmail("john.doe@example.com");
+        dto.setIdEstado(1);
         dto.setIdTipoPrestamo(1);
 
         Solicitud solicitud = mapper.toModel(dto);

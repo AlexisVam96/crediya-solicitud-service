@@ -34,4 +34,8 @@ public class SolicitudDto {
 
     @Schema(description = "Número de documento del solicitante", example = "123456789")
     private String documentNumber;
+
+    private String nameUser;
+    private BigDecimal baseSalary;
+    private BigDecimal interestRate;
 }

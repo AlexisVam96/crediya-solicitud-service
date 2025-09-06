@@ -21,4 +21,8 @@ public class Solicitud {
     private Integer idEstado;
     private Integer idTipoPrestamo;
     private String documentNumber;
+
+    private String nameUser;
+    private BigDecimal baseSalary;
+    private BigDecimal interestRate;
 }

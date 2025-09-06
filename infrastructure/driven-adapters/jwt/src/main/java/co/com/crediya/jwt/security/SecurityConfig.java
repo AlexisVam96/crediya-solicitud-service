@@ -32,6 +32,7 @@ public class SecurityConfig {
                 .authorizeExchange(authorize -> authorize
                         // Allow POST requests to /api/v1/solicitud for users with USER role
                         .pathMatchers(HttpMethod.POST,"/api/v1/solicitud").hasRole("USER")
+                        .pathMatchers(HttpMethod.GET,"/api/v1/solicitud").hasRole("ADMIN")
                         .anyExchange().authenticated() // Disable all requests
                 )
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION) // Add custom JWT authentication filter

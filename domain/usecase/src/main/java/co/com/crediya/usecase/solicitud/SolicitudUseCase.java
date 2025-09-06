@@ -6,13 +6,16 @@ import co.com.crediya.model.exception.LoanApplicationCustomerException;
 import co.com.crediya.model.security.JwtAuthenticationGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
+import co.com.crediya.model.tipoprestamo.TipoPrestamo;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.crediya.model.transaction.TransactionManager;
+import co.com.crediya.model.user.User;
 import co.com.crediya.model.user.gateway.ExternalUserGateway;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
@@ -35,6 +38,28 @@ public class SolicitudUseCase {
     public Flux<Solicitud> getAllSolicitudes() {
         log.info("SolicitudUseCase.getAllSolicitudes: Starting getAllSolicitudes for solicitud");
         return transactionManager.doInTransaction(solicitudRepository.findAll());
+    }
+
+    public Flux<Solicitud> getLoanApplicationByStatus(Integer page, Integer size, String idEstado) {
+        log.info("SolicitudUseCase.getSolicitudesByEstado: Starting getLoanApplicationByStatus for estado " + idEstado);
+        if(size == null || size <= 0) size = 10;
+        if(page == null || page < 0) page = 0;
+        return transactionManager.doInTransaction(
+                solicitudRepository.findByIdEstado(page, size, idEstado)
+                        .flatMap(solicitud ->
+                                Mono.zip(
+                                        externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber()),
+                                        tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo())
+                                ).map(tuple -> {
+                                    User user = tuple.getT1();
+                                    TipoPrestamo tipoPrestamo = tuple.getT2();
+                                    solicitud.setNameUser(user.getFirstName() + " " + user.getLastName());
+                                    solicitud.setBaseSalary(user.getSalary());
+                                    solicitud.setInterestRate(tipoPrestamo.getTasaInteres());
+                                    return solicitud;
+                                })
+                        )
+        );
     }
 
     public Mono<Solicitud> createSolicitud(Solicitud solicitud) {

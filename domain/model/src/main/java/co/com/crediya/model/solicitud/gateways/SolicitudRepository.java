@@ -8,6 +8,8 @@ public interface SolicitudRepository {
 
     Flux<Solicitud> findAll();
 
+    Flux<Solicitud> findByIdEstado(Integer page, Integer size, String idEstado);
+
     Mono<Solicitud> save(Solicitud solicitud);
 
 }
