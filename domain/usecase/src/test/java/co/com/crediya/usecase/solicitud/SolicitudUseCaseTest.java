@@ -2,6 +2,7 @@ package co.com.crediya.usecase.solicitud;
 
 import co.com.crediya.model.estado.Estado;
 import co.com.crediya.model.estado.gateways.EstadoRepository;
+import co.com.crediya.model.security.JwtAuthenticationGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
@@ -46,6 +47,9 @@ public class SolicitudUseCaseTest {
     @Mock
     private ExternalUserGateway externalUserGateway;
 
+    @Mock
+    private JwtAuthenticationGateway jwtAuthenticationGateway;
+
     private Solicitud solicitud;
 
     @BeforeEach
@@ -53,6 +57,7 @@ public class SolicitudUseCaseTest {
         solicitud = new Solicitud();
         solicitud.setIdSolicitud(1);
         solicitud.setDocumentNumber("76543210");
+        solicitud.setEmail("test@gmail.com");
         solicitud.setMonto(new BigDecimal(12000.0));
         solicitud.setPlazo(12);
         solicitud.setIdTipoPrestamo(1);
@@ -76,6 +81,7 @@ public class SolicitudUseCaseTest {
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(Mono.just(solicitud));
         when(transactionManager.doInTransaction(any(Mono.class))).thenAnswer(invocation -> invocation.getArgument(0));
         when(externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())).thenReturn(Mono.just(new User()));
+        when(jwtAuthenticationGateway.getCurrentEmail()).thenReturn(Mono.just("test@gmail.com"));
 
         StepVerifier.create(solicitudUseCase.createSolicitud(solicitud))
                 .expectNext(solicitud)

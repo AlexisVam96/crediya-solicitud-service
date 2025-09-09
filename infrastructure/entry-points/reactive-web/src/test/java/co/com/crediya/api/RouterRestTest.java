@@ -55,13 +55,14 @@ class RouterRestTest {
         Solicitud solicitud = solicitud();
         SolicitudDto dto = solicitudDto();
 
-        when(solicitudUseCase.getAllSolicitudes()).thenReturn(Flux.just(solicitud));
-        when(solicitudDtoMapper.toResponseList(List.of(solicitud))).thenReturn(Collections.singletonList(dto));
+        when(solicitudUseCase.getLoanApplicationByStatus(any(), any(), any()))
+                .thenReturn(Flux.just(solicitud));
+        when(solicitudDtoMapper.toResponseList(List.of(solicitud)))
+                .thenReturn(Collections.singletonList(dto));
 
         // Act & Assert
         webTestClient.get()
-                .uri("/api/v1/solicitud")
-                .accept(MediaType.APPLICATION_JSON)
+                .uri("/api/v1/solicitud?page=1&size=3&status=1")
                 .exchange()
                 .expectStatus().isOk()
                 .expectBodyList(SolicitudDto.class)

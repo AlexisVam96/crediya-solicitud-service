@@ -41,7 +41,7 @@ public class SolicitudUseCase {
     }
 
     public Flux<Solicitud> getLoanApplicationByStatus(Integer page, Integer size, String idEstado) {
-        log.info("SolicitudUseCase.getSolicitudesByEstado: Starting getLoanApplicationByStatus for estado " + idEstado);
+        log.info("SolicitudUseCase.getSolicitudesByEstado: Starting getLoanApplicationByStatus for status " + idEstado);
         if(size == null || size <= 0) size = 10;
         if(page == null || page < 0) page = 0;
         return transactionManager.doInTransaction(

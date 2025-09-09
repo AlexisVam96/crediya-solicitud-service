@@ -38,14 +38,14 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenGETLoanApplicationByStatus(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(FilterLoanApplicationRequest.class)
-                .flatMap(filter -> solicitudUseCase.getLoanApplicationByStatus(
-                        filter.getPage(),
-                        filter.getSize(),
-                        filter.getStatusLoanApplication())
-                        .collectList()
-                        .map(solicitudDtoMapper::toResponseList)
-                        .flatMap(solicitudDtoList -> ServerResponse.ok().bodyValue(solicitudDtoList)));
+        Integer page = Integer.parseInt(serverRequest.queryParam("page").orElse("0"));
+        Integer size = Integer.parseInt(serverRequest.queryParam("size").orElse("10"));
+        String statusLoanApplication = serverRequest.queryParam("status").orElse("1");
+        return  solicitudUseCase.getLoanApplicationByStatus(
+                    page, size, statusLoanApplication)
+                    .collectList()
+                    .map(solicitudDtoMapper::toResponseList)
+                    .flatMap(solicitudDtoList -> ServerResponse.ok().bodyValue(solicitudDtoList));
     }
 
 }
