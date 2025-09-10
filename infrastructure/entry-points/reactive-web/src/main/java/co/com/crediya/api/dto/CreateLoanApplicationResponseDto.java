@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CreateSolicitudDto {
+public class CreateLoanApplicationResponseDto {
 
     @Schema(hidden = true)
     private Integer idSolicitud;
@@ -31,4 +31,7 @@ public class CreateSolicitudDto {
 
     @Schema(description = "Número de documento del solicitante", example = "123456789")
     private String documentNumber;
+
+    @Schema(description = "Estado del solicitante", example = "1")
+    private Integer idEstado;
 }

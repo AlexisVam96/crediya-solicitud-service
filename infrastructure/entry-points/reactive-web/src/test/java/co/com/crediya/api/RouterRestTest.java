@@ -1,6 +1,7 @@
 package co.com.crediya.api;
 
-import co.com.crediya.api.dto.CreateSolicitudDto;
+import co.com.crediya.api.dto.CreateLoanApplicationRequestDto;
+import co.com.crediya.api.dto.CreateLoanApplicationResponseDto;
 import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.api.mapper.SolicitudDtoMapper;
 import co.com.crediya.model.solicitud.Solicitud;
@@ -42,6 +43,13 @@ class RouterRestTest {
         return dto;
     }
 
+    private CreateLoanApplicationResponseDto solicitudResponseDto() {
+        CreateLoanApplicationResponseDto response = new CreateLoanApplicationResponseDto();
+        response.setEmail("john.doe@example.com");
+        // Set other required fields as needed
+        return response;
+    }
+
     private Solicitud solicitud() {
         Solicitud solicitud = new Solicitud();
         solicitud.setEmail("john.doe@example.com");
@@ -76,17 +84,17 @@ class RouterRestTest {
 
     @Test
     void testListenPOSTSaveUser_shouldReturnOkResponse() {
-        SolicitudDto dto = solicitudDto();
+        CreateLoanApplicationResponseDto responseLoanApplication = solicitudResponseDto();
         Solicitud solicitud = solicitud();
 
-        when(solicitudDtoMapper.toModel(any(CreateSolicitudDto.class))).thenReturn(solicitud);
+        when(solicitudDtoMapper.toModel(any(CreateLoanApplicationRequestDto.class))).thenReturn(solicitud);
         when(solicitudUseCase.createSolicitud(any(Solicitud.class))).thenReturn(Mono.just(solicitud));
-        when(solicitudDtoMapper.toResponse(any(Solicitud.class))).thenReturn(dto);
+        when(solicitudDtoMapper.toResponseCreate(any(Solicitud.class))).thenReturn(responseLoanApplication);
 
         webTestClient.post()
                 .uri("/api/v1/solicitud")
                 .contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(dto)
+                .bodyValue(responseLoanApplication)
                 .exchange()
                 .expectStatus().isOk()
                 .expectBody(SolicitudDto.class)

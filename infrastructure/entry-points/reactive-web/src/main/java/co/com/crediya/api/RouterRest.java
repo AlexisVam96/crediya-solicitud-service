@@ -1,11 +1,7 @@
 package co.com.crediya.api;
 
-import co.com.crediya.api.dto.CreateSolicitudDto;
-import co.com.crediya.api.dto.SolicitudDto;
-import co.com.crediya.model.solicitud.Solicitud;
+import co.com.crediya.api.dto.CreateLoanApplicationRequestDto;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -52,7 +48,7 @@ public class RouterRest {
                             required = true,
                             content = @Content(
                                 mediaType = "application/json",
-                                schema = @Schema(implementation = CreateSolicitudDto.class),
+                                schema = @Schema(implementation = CreateLoanApplicationRequestDto.class),
                                 examples = {
                                     @ExampleObject(
                                         name = "Crear Solicitud con Estado Inicial Pendiente",

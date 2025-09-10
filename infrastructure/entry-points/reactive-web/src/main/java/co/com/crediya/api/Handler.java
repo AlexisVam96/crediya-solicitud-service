@@ -1,17 +1,13 @@
 package co.com.crediya.api;
 
-import co.com.crediya.api.dto.CreateSolicitudDto;
-import co.com.crediya.api.dto.SolicitudDto;
-import co.com.crediya.api.filter.FilterLoanApplicationRequest;
+import co.com.crediya.api.dto.CreateLoanApplicationRequestDto;
 import co.com.crediya.api.mapper.SolicitudDtoMapper;
-import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.usecase.solicitud.SolicitudUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Slf4j
@@ -30,10 +26,10 @@ public class Handler {
     }
 
     public Mono<ServerResponse> listenPOSTUseCase(ServerRequest serverRequest) {
-        return serverRequest.bodyToMono(CreateSolicitudDto.class)
+        return serverRequest.bodyToMono(CreateLoanApplicationRequestDto.class)
                 .map(solicitudDtoMapper::toModel)
                 .flatMap(solicitudUseCase::createSolicitud)
-                .map(solicitudDtoMapper::toResponse)
+                .map(solicitudDtoMapper::toResponseCreate)
                 .flatMap(solicitudDto -> ServerResponse.ok().bodyValue(solicitudDto));
     }
 

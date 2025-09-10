@@ -6,6 +6,7 @@ import io.r2dbc.pool.ConnectionPoolConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,12 +17,15 @@ public class PostgreSQLConnectionPool {
     public static final int MAX_SIZE = 15;
     public static final int MAX_IDLE_TIME = 30;
 
+	@Value("${db.host}")
+	private String dbHost;
+
 	@Bean
 	public ConnectionPool getConnectionConfig() {
         // TODO: change these properties for yours
 		PostgresqlConnectionProperties pgProperties = new PostgresqlConnectionProperties();
 		pgProperties.setDatabase("db_crediya_solicitud");
-		pgProperties.setHost("localhost");
+		pgProperties.setHost(dbHost);
 		pgProperties.setPort(5432);
 		pgProperties.setUsername("admin");
 		pgProperties.setPassword("admin");

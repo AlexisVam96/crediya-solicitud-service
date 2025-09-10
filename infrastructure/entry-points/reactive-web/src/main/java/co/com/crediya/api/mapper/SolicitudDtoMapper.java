@@ -1,6 +1,7 @@
 package co.com.crediya.api.mapper;
 
-import co.com.crediya.api.dto.CreateSolicitudDto;
+import co.com.crediya.api.dto.CreateLoanApplicationRequestDto;
+import co.com.crediya.api.dto.CreateLoanApplicationResponseDto;
 import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.model.solicitud.Solicitud;
 import org.mapstruct.Mapper;
@@ -14,5 +15,7 @@ public interface SolicitudDtoMapper {
 
     List<SolicitudDto> toResponseList(List<Solicitud> solicitudes);
 
-    Solicitud toModel(CreateSolicitudDto createSolicitudDto);
+    Solicitud toModel(CreateLoanApplicationRequestDto createSolicitudDto);
+
+    CreateLoanApplicationResponseDto toResponseCreate(Solicitud solicitud);
 }

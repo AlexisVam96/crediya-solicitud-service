@@ -38,7 +38,7 @@ springdoc:
 adapter:
   restconsumer:
     timeout: 5000
-    url: "http://localhost:8080"
+    url: "http://${SERVICE_AUTHENTICATION:localhost}:8080"
 resilience4j:
   circuitbreaker:
     instances:
@@ -62,5 +62,8 @@ resilience4j:
         waitDurationInOpenState: "10s"
 
 jwt:
-  secret: secretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecretsecret
+  secret: mysupersecretkey-crediya-1234567890
   expiration: 3600000 # 1 hour in milliseconds
+
+db:
+  host: ${SPRING_R2DBC_HOST_LOANAPPLICATION:localhost}
