@@ -39,6 +39,10 @@ adapter:
   restconsumer:
     timeout: 5000
     url: "http://${SERVICE_AUTHENTICATION:localhost}:8080"
+  sqs:
+    region: "us-east-2"
+    queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/solicitudes-queue"
+    #endpoint: "http://localhost:4566 # For localstack only"
 resilience4j:
   circuitbreaker:
     instances:
@@ -60,10 +64,8 @@ resilience4j:
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
         waitDurationInOpenState: "10s"
-
 jwt:
-  secret: mysupersecretkey-crediya-1234567890
-  expiration: 3600000 # 1 hour in milliseconds
-
+  secret: "mysupersecretkey-crediya-1234567890"
+  expiration: 3600000
 db:
-  host: ${SPRING_R2DBC_HOST_LOANAPPLICATION:localhost}
+  host: "${SPRING_R2DBC_HOST_LOANAPPLICATION:localhost}"

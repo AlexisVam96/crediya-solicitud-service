@@ -12,4 +12,6 @@ public interface SolicitudRepository {
 
     Mono<Solicitud> save(Solicitud solicitud);
 
+    Mono<Solicitud> findByIdSolicitud(Integer idSolicitud);
+
 }

@@ -17,5 +17,7 @@ public interface SolicitudDtoMapper {
 
     Solicitud toModel(CreateLoanApplicationRequestDto createSolicitudDto);
 
+    Solicitud toModel(SolicitudDto solicitudDto);
+
     CreateLoanApplicationResponseDto toResponseCreate(Solicitud solicitud);
 }

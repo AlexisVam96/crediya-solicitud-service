@@ -1,6 +1,7 @@
 package co.com.crediya.api;
 
 import co.com.crediya.api.dto.CreateLoanApplicationRequestDto;
+import co.com.crediya.api.dto.SolicitudDto;
 import co.com.crediya.api.mapper.SolicitudDtoMapper;
 import co.com.crediya.usecase.solicitud.SolicitudUseCase;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,14 @@ public class Handler {
                     .collectList()
                     .map(solicitudDtoMapper::toResponseList)
                     .flatMap(solicitudDtoList -> ServerResponse.ok().bodyValue(solicitudDtoList));
+    }
+
+    public Mono<ServerResponse> listenPUTLoanApplicationByStatus(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(SolicitudDto.class)
+                .map(solicitudDtoMapper::toModel)
+                .flatMap(solicitudUseCase::updateSolicitud)
+                .map(solicitudDtoMapper::toResponseCreate)
+                .flatMap(solicitudDto -> ServerResponse.ok().bodyValue(solicitudDto));
     }
 
 }

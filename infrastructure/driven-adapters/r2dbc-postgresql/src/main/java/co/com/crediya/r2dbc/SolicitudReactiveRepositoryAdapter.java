@@ -8,6 +8,7 @@ import org.reactivecommons.utils.ObjectMapper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Repository
 public class SolicitudReactiveRepositoryAdapter extends ReactiveAdapterOperations<Solicitud, SolicitudEntity, Integer, SolicitudReactiveRepository>
@@ -30,6 +31,12 @@ public class SolicitudReactiveRepositoryAdapter extends ReactiveAdapterOperation
                 .skip(pageable.getOffset())
                 .take(pageable.getPageSize())
                 .map(solicitudEntity -> mapper.map(solicitudEntity, Solicitud.class));
+    }
+
+    @Override
+    public Mono<Solicitud> findByIdSolicitud(Integer idSolicitud) {
+        return repository.findByIdSolicitud(idSolicitud)
+                .map(entity -> mapper.map(entity, Solicitud.class));
     }
 
 }

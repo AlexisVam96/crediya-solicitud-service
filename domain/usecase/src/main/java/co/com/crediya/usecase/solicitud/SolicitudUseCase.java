@@ -6,6 +6,7 @@ import co.com.crediya.model.exception.LoanApplicationCustomerException;
 import co.com.crediya.model.security.JwtAuthenticationGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
+import co.com.crediya.model.sqs.SqsSendEmailGateway;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.crediya.model.transaction.TransactionManager;
@@ -35,9 +36,38 @@ public class SolicitudUseCase {
 
     private final JwtAuthenticationGateway jwtAuthenticationGateway;
 
+    private final SqsSendEmailGateway sqsSendEmailGateway;
+
     public Flux<Solicitud> getAllSolicitudes() {
         log.info("SolicitudUseCase.getAllSolicitudes: Starting getAllSolicitudes for solicitud");
         return transactionManager.doInTransaction(solicitudRepository.findAll());
+    }
+
+    public Mono<Solicitud> updateSolicitud(Solicitud solicitud) {
+        log.info("SolicitudUseCase.updateSolicitud: Starting updateSolicitud for solicitud " + solicitud);
+        return transactionManager.doInTransaction(
+                externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
+                        .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("User not found for document number", ErrorType.NOT_FOUND)))
+                        .flatMap(user ->
+                                solicitudRepository.findByIdSolicitud(solicitud.getIdSolicitud())
+                                        .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Loan application not found", ErrorType.NOT_FOUND)))
+                                        .map(existingSolicitud -> {
+                                            existingSolicitud.setIdEstado(solicitud.getIdEstado());
+                                            existingSolicitud.setDocumentNumber(user.getDocumentNumber());
+                                            return existingSolicitud;
+                                        })
+                                        .flatMap(solicitudRepository::save)
+                                        .map(savedSolicitud -> {
+                                            savedSolicitud.setNameUser(user.getFirstName() + " " + user.getLastName());
+                                            savedSolicitud.setBaseSalary(user.getSalary());
+                                            return savedSolicitud;
+                                        })
+                                        .flatMap(savedSolicitud ->
+                                                sqsSendEmailGateway.send(savedSolicitud)
+                                                        .thenReturn(savedSolicitud)
+                                        )
+                        )
+        );
     }
 
     public Flux<Solicitud> getLoanApplicationByStatus(Integer page, Integer size, String idEstado) {
