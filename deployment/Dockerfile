@@ -1,3 +1,10 @@
+# Stage 1: Build the JAR with Gradle
+FROM gradle:8.5-jdk17-alpine AS build
+WORKDIR /app
+COPY . .
+RUN gradle :applications:app-service:build --no-daemon
+
+# Stage 2: Run the JAR with a lightweight JDK
 FROM eclipse-temurin:17-jdk-alpine
 VOLUME /tmp
 COPY applications/app-service/build/libs/crediya-solicitud-service.jar crediya-solicitud-service.jar

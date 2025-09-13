@@ -22,7 +22,7 @@ public class SQSSender implements SqsSendEmailGateway {
     public Mono<String> send(Solicitud solicitud) {
         return Mono.fromCallable(() -> buildRequest(solicitud))
                 .flatMap(request -> Mono.fromFuture(client.sendMessage(request)))
-                .doOnNext(response -> log.debug("Message sent {}", response.messageId()))
+                .doOnNext(response -> log.info("Message sent {}", response.messageId()))
                 .map(SendMessageResponse::messageId);
     }
 
