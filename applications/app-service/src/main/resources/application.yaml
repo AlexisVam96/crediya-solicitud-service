@@ -43,6 +43,11 @@ adapter:
     region: "us-east-2"
     queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/solicitudes-queue"
     #endpoint: "http://localhost:4566 # For localstack only"
+    debt-capacity:
+      region: "us-east-2"
+      queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/debt-capacity-queue"
+      replyQueueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/reply-dept-capacity-queue"
+      #endpoint: "http://localhost:4566 # For localstack only"
 resilience4j:
   circuitbreaker:
     instances:

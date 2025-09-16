@@ -1,7 +1,7 @@
 package co.com.crediya.sqs.sender;
 
 import co.com.crediya.model.solicitud.Solicitud;
-import co.com.crediya.model.sqs.SqsSendEmailGateway;
+import co.com.crediya.model.sqs.gateway.SqsSendEmailGateway;
 import co.com.crediya.sqs.sender.config.SQSSenderProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

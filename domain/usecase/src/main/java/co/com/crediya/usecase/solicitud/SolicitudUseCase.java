@@ -6,7 +6,8 @@ import co.com.crediya.model.exception.LoanApplicationCustomerException;
 import co.com.crediya.model.security.JwtAuthenticationGateway;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
-import co.com.crediya.model.sqs.SqsSendEmailGateway;
+import co.com.crediya.model.sqs.gateway.SqsSendDeptCapacityGateway;
+import co.com.crediya.model.sqs.gateway.SqsSendEmailGateway;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.crediya.model.transaction.TransactionManager;
@@ -16,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.math.BigDecimal;
 import java.util.logging.Logger;
 
 @RequiredArgsConstructor
@@ -38,9 +38,46 @@ public class SolicitudUseCase {
 
     private final SqsSendEmailGateway sqsSendEmailGateway;
 
+    private final SqsSendDeptCapacityGateway sqsSendDeptCapacityGateway;
+
     public Flux<Solicitud> getAllSolicitudes() {
         log.info("SolicitudUseCase.getAllSolicitudes: Starting getAllSolicitudes for solicitud");
         return transactionManager.doInTransaction(solicitudRepository.findAll());
+    }
+
+    public Mono<Solicitud> calculateDebtCapacity(Solicitud solicitud) {
+        log.info("SolicitudUseCase.calculateDebtCapacity: Starting calculateDebtCapacity for solicitud " + solicitud);
+        return transactionManager.doInTransaction(
+                externalUserGateway.findByDocumentNumber(solicitud.getDocumentNumber())
+                        .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("User not found for document number", ErrorType.NOT_FOUND)))
+                        .flatMap(user -> {
+                            solicitud.setDocumentNumber(user.getDocumentNumber());
+                            solicitud.setNameUser(user.getFirstName() + " " + user.getLastName());
+                            solicitud.setBaseSalary(user.getSalary());
+                            return tipoPrestamoRepository.findByIdTipoPrestamo(solicitud.getIdTipoPrestamo());
+                        })
+                        .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Invalid loan type", ErrorType.VALIDATION)))
+                        .filter(TipoPrestamo::getValidacionAutomatica)
+                        .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("The loan type does not allow automatic validation", ErrorType.VALIDATION)))
+                        .map(tipoPrestamo -> {
+                            solicitud.setInterestRate(tipoPrestamo.getTasaInteres());
+                            return solicitud;
+                        })
+                        .flatMap(solicitudToSend ->
+                                sqsSendDeptCapacityGateway.send(solicitudToSend)
+                                        .then(sqsSendDeptCapacityGateway.receive())
+                                        .flatMap(deptCapacityResponse -> {
+                                            if(deptCapacityResponse.getResultado().equals("APROBADO")){
+                                                solicitudToSend.setIdEstado(2); // Estado "Aprobado"
+                                            } else if (deptCapacityResponse.getResultado().equals("RECHAZADO")){
+                                                solicitudToSend.setIdEstado(3); // Estado "Rechazado"
+                                            } else {
+                                                solicitudToSend.setIdEstado(1); // Estado "Pendiente de revisión"
+                                            }
+                                            return solicitudRepository.save(solicitudToSend);
+                                        })
+                        )
+        );
     }
 
     public Mono<Solicitud> updateSolicitud(Solicitud solicitud) {
