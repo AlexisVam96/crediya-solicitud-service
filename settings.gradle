@@ -28,3 +28,5 @@ include ':sqs-sender'
 project(':sqs-sender').projectDir = file('./infrastructure/driven-adapters/sqs-sender')
 include ':sqs-debt-capacity'
 project(':sqs-debt-capacity').projectDir = file('./infrastructure/driven-adapters/sqs-debt-capacity')
+include ':sqs-listener'
+project(':sqs-listener').projectDir = file('./infrastructure/entry-points/sqs-listener')

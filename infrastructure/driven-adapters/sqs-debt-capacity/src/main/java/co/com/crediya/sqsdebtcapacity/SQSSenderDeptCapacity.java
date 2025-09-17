@@ -44,32 +44,4 @@ public class SQSSenderDeptCapacity implements SqsSendDeptCapacityGateway {
         }
 
     }
-
-    @Override
-    public Mono<DeptCapacityResponse> receive() {
-        ReceiveMessageRequest request = ReceiveMessageRequest.builder()
-                .queueUrl(properties.getReplyQueueUrl())
-                .maxNumberOfMessages(1)
-                .waitTimeSeconds(5)
-                .build();
-
-        return Mono.fromFuture(client.receiveMessage(request))
-                .flatMapMany(response -> Flux.fromIterable(response.messages()))
-                .next()
-                .switchIfEmpty(Mono.error(new LoanApplicationCustomerException(
-                        "No messages available in SQS",
-                        ErrorType.NOT_FOUND
-                )))
-                .flatMap(message ->
-                        Mono.fromCallable(() -> objectMapper.readValue(message.body(), DeptCapacityResponse.class))
-                                .doOnSuccess(body -> client.deleteMessage(DeleteMessageRequest.builder()
-                                        .queueUrl(properties.getReplyQueueUrl())
-                                        .receiptHandle(message.receiptHandle())
-                                        .build()))
-                )
-                .onErrorMap(e -> new LoanApplicationCustomerException(
-                        "Error parsing message body: " + e.getMessage(),
-                        ErrorType.SYSTEM
-                ));
-    }
 }

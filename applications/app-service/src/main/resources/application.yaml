@@ -42,12 +42,10 @@ adapter:
   sqs:
     region: "us-east-2"
     queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/solicitudes-queue"
-    #endpoint: "http://localhost:4566 # For localstack only"
     debt-capacity:
       region: "us-east-2"
       queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/debt-capacity-queue"
       replyQueueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/reply-dept-capacity-queue"
-      #endpoint: "http://localhost:4566 # For localstack only"
 resilience4j:
   circuitbreaker:
     instances:
@@ -74,3 +72,12 @@ jwt:
   expiration: 3600000
 db:
   host: "${SPRING_R2DBC_HOST_LOANAPPLICATION:localhost}"
+entrypoint:
+  sqs:
+    region: "us-east-2"
+    endpoint: "https://sqs.us-east-2.amazonaws.com"
+    queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/reply-dept-capacity-queue"
+    waitTimeSeconds: 20
+    maxNumberOfMessages: 10
+    visibilityTimeout: 10000
+    numberOfThreads: 1

@@ -53,4 +53,12 @@ public class Handler {
                 .flatMap(solicitudDto -> ServerResponse.ok().bodyValue(solicitudDto));
     }
 
+    public Mono<ServerResponse> listenPOSTCalculateDebtCapacity(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(CreateLoanApplicationRequestDto.class)
+                .map(solicitudDtoMapper::toModel)
+                .flatMap(solicitudUseCase::calculateDebtCapacity)
+                .map(solicitudDtoMapper::toResponseCreate)
+                .flatMap(solicitudDto -> ServerResponse.ok().bodyValue(solicitudDto));
+    }
+
 }
