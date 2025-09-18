@@ -33,6 +33,12 @@ public class SecurityConfig {
                         // Allow POST requests to /api/v1/solicitud for users with USER role
                         .pathMatchers(HttpMethod.POST,"/api/v1/solicitud").hasRole("USER")
                         .pathMatchers(HttpMethod.GET,"/api/v1/solicitud").hasRole("ADMIN")
+                        .pathMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
+                        ).permitAll()// login/register público
                         .anyExchange().authenticated() // Disable all requests
                 )
                 .addFilterAt(jwtAuthenticationFilter, SecurityWebFiltersOrder.AUTHENTICATION) // Add custom JWT authentication filter
