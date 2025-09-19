@@ -3,6 +3,8 @@ server:
   error:
     include-message: "always"
 spring:
+  main:
+    allow-bean-definition-overriding: true
   application:
     name: "crediya-solicitud-service"
   devtools:
@@ -45,7 +47,9 @@ adapter:
     debt-capacity:
       region: "us-east-2"
       queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/debt-capacity-queue"
-      replyQueueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/reply-dept-capacity-queue"
+    estado-solicitud:
+      region: "us-east-2"
+      queueUrl: "https://sqs.us-east-2.amazonaws.com/818084701499/estado-solicitud-queue"
 resilience4j:
   circuitbreaker:
     instances:

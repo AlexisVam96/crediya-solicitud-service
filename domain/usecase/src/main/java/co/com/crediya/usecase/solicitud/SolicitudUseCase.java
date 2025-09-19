@@ -9,6 +9,7 @@ import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.sqs.DeptCapacityResponse;
 import co.com.crediya.model.sqs.gateway.SqsSendDeptCapacityGateway;
 import co.com.crediya.model.sqs.gateway.SqsSendEmailGateway;
+import co.com.crediya.model.sqs.gateway.SqsSendEstadoSolicitudGateway;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.crediya.model.transaction.TransactionManager;
@@ -40,6 +41,8 @@ public class SolicitudUseCase {
     private final SqsSendEmailGateway sqsSendEmailGateway;
 
     private final SqsSendDeptCapacityGateway sqsSendDeptCapacityGateway;
+
+    private final SqsSendEstadoSolicitudGateway sqsSendEstadoSolicitudGateway;
 
     public Flux<Solicitud> getAllSolicitudes() {
         log.info("SolicitudUseCase.getAllSolicitudes: Starting getAllSolicitudes for solicitud");
@@ -76,17 +79,18 @@ public class SolicitudUseCase {
     public Mono<Solicitud> handleDebtCapacityResponse(DeptCapacityResponse response) {
         return solicitudRepository.findByIdSolicitud(response.getIdSolicitud())
                 .switchIfEmpty(Mono.error(new LoanApplicationCustomerException("Solicitud no encontrada", ErrorType.NOT_FOUND)))
-                .flatMap(solicitud -> {
-                    if ("APROBADO".equalsIgnoreCase(response.getResultado())) {
-                        solicitud.setIdEstado(2); // aprobado
-                    } else if ("RECHAZADO".equalsIgnoreCase(response.getResultado())) {
-                        solicitud.setIdEstado(3); // rechazado
+                .map(solicitud -> updateStatusLoanApplication(solicitud, response.getResultado()))
+                .flatMap(solicitudRepository::save)
+                .doOnSuccess(saved -> log.info("Solicitud actualizada con estado " + saved.getIdEstado()))
+                .flatMap(solicitudUpdate -> {
+                    if (solicitudUpdate.getIdEstado() == 2) {
+                        return sqsSendEstadoSolicitudGateway.send(solicitudUpdate)
+                                .thenReturn(solicitudUpdate);
                     } else {
-                        solicitud.setIdEstado(1); // pendiente
+                        return Mono.just(solicitudUpdate);
                     }
-                    return solicitudRepository.save(solicitud);
-                })
-                .doOnSuccess(saved -> log.info("Solicitud actualizada con estado " + saved.getIdEstado()));
+                });
+
     }
 
 
@@ -163,5 +167,16 @@ public class SolicitudUseCase {
                                 })
                     );
                 });
+    }
+
+    private Solicitud updateStatusLoanApplication(Solicitud solicitud, String resultado){
+        if ("APROBADO".equalsIgnoreCase(resultado)) {
+            solicitud.setIdEstado(2); // aprobado
+        } else if ("RECHAZADO".equalsIgnoreCase(resultado)) {
+            solicitud.setIdEstado(3); // rechazado
+        } else {
+            solicitud.setIdEstado(1); // pendiente
+        }
+        return solicitud;
     }
 }

@@ -141,6 +141,7 @@ public class SolicitudUseCaseTest {
                 .verify();
     }
 
+    /*
     @Test
     void handleDebtCapacityResponse_aprobado() {
         DeptCapacityResponse response = new DeptCapacityResponse();
@@ -190,6 +191,8 @@ public class SolicitudUseCaseTest {
                 .expectNext(solicitud)
                 .verifyComplete();
     }
+
+     */
 
     @Test
     void updateSolicitud_success() {

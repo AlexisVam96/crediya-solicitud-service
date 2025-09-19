@@ -1,4 +1,4 @@
-package co.com.crediya.sqsdebtcapacity.config;
+package co.com.crediya.sqsestadosolicitud.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,8 +12,8 @@ import org.springframework.context.annotation.Configuration;
 @NoArgsConstructor
 @AllArgsConstructor
 @Configuration
-@ConfigurationProperties(prefix = "adapter.sqs.debt-capacity")
-public class SQSSenderDeptCapacityProperties {
+@ConfigurationProperties(prefix = "adapter.sqs.estado-solicitud")
+public class SQSSenderEstadoSolicitudProperties {
     private String region;
     private String queueUrl;
     private String endpoint;

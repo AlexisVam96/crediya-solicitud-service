@@ -30,3 +30,5 @@ include ':sqs-debt-capacity'
 project(':sqs-debt-capacity').projectDir = file('./infrastructure/driven-adapters/sqs-debt-capacity')
 include ':sqs-listener'
 project(':sqs-listener').projectDir = file('./infrastructure/entry-points/sqs-listener')
+include ':sqs-estado-solicitud'
+project(':sqs-estado-solicitud').projectDir = file('./infrastructure/driven-adapters/sqs-estado-solicitud')

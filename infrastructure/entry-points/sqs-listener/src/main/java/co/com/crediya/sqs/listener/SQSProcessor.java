@@ -16,7 +16,7 @@ import java.util.function.Function;
 @RequiredArgsConstructor
 public class SQSProcessor implements Function<Message, Mono<Void>> {
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private final SolicitudUseCase solicitudUseCase;
 
     @Override
