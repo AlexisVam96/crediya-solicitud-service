@@ -16,6 +16,10 @@ public class EstadoEntity {
     @Id
     @Column("id_estado")
     private Integer idEstado;
+
+    @Column("nombre")
     private String nombre;
+
+    @Column("descripcion")
     private String descripcion;
 }

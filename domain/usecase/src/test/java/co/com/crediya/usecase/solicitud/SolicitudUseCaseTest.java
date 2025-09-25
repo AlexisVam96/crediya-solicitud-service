@@ -10,6 +10,7 @@ import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.sqs.DeptCapacityResponse;
 import co.com.crediya.model.sqs.gateway.SqsSendDeptCapacityGateway;
 import co.com.crediya.model.sqs.gateway.SqsSendEmailGateway;
+import co.com.crediya.model.sqs.gateway.SqsSendEstadoSolicitudGateway;
 import co.com.crediya.model.tipoprestamo.TipoPrestamo;
 import co.com.crediya.model.tipoprestamo.gateways.TipoPrestamoRepository;
 import co.com.crediya.model.transaction.TransactionManager;
@@ -63,6 +64,9 @@ public class SolicitudUseCaseTest {
 
     @Mock
     private SqsSendDeptCapacityGateway sqsSendDeptCapacityGateway;
+
+    @Mock
+    private SqsSendEstadoSolicitudGateway sqsSendEstadoSolicitudGateway;
 
 
     private Solicitud solicitud;
@@ -141,7 +145,6 @@ public class SolicitudUseCaseTest {
                 .verify();
     }
 
-    /*
     @Test
     void handleDebtCapacityResponse_aprobado() {
         DeptCapacityResponse response = new DeptCapacityResponse();
@@ -149,6 +152,7 @@ public class SolicitudUseCaseTest {
         response.setResultado("APROBADO");
         when(solicitudRepository.findByIdSolicitud(1)).thenReturn(Mono.just(solicitud));
         when(solicitudRepository.save(any(Solicitud.class))).thenReturn(Mono.just(solicitud));
+        when(sqsSendEstadoSolicitudGateway.send(any(Solicitud.class))).thenReturn(Mono.empty());
 
         StepVerifier.create(solicitudUseCase.handleDebtCapacityResponse(response))
                 .expectNext(solicitud)
@@ -191,8 +195,6 @@ public class SolicitudUseCaseTest {
                 .expectNext(solicitud)
                 .verifyComplete();
     }
-
-     */
 
     @Test
     void updateSolicitud_success() {

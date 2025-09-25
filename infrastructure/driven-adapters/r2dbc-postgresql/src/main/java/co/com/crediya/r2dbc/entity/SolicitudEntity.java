@@ -14,17 +14,20 @@ import java.math.BigDecimal;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 @Table(name = "solicitud_entity")
 public class SolicitudEntity {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column("id_solicitud")
     private Integer idSolicitud;
 
+    @Column("monto")
     private BigDecimal monto;
+
+    @Column("plazo")
     private Integer plazo;
+
+    @Column("email")
     private String email;
 
     @Column("id_estado")
@@ -33,6 +36,7 @@ public class SolicitudEntity {
     @Column("id_tipo_prestamo")
     private Integer idTipoPrestamo;
 
+    @Column("document_number")
     private String documentNumber;
 
 }

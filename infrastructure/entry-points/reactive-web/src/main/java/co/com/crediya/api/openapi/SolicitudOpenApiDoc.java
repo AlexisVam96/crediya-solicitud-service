@@ -175,6 +175,58 @@ public interface SolicitudOpenApiDoc {
                                     )
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/solicitud",
+                    method = RequestMethod.PUT,
+                    beanClass = Handler.class,
+                    beanMethod = "listenPUTLoanApplicationByStatus",
+                    operation = @Operation(
+                            operationId = "listenPUTLoanApplicationByStatus",
+                            summary = "Actualizar solicitud",
+                            description = "Actualiza una solicitud existente.",
+                            requestBody = @RequestBody(
+                                    description = "Datos de la solicitud a actualizar",
+                                    required = true,
+                                    content = @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = co.com.crediya.api.dto.SolicitudDto.class),
+                                            examples = @ExampleObject(
+                                                    name = "Actualizar Solicitud",
+                                                    value = "{\n" +
+                                                            "  \"idSolicitud\": 10,\n" +
+                                                            "  \"monto\": 1500.00,\n" +
+                                                            "  \"plazo\": 12,\n" +
+                                                            "  \"email\": \"jhon.doe@crediya.com\",\n" +
+                                                            "  \"idTipoPrestamo\": 1,\n" +
+                                                            "  \"documentNumber\": \"77283809\",\n" +
+                                                            "  \"estado\": \"Aprobado\"\n" +
+                                                            "}"
+                                            )
+                                    )
+                            ),
+                            responses = {
+                                    @ApiResponse(
+                                            responseCode = "200",
+                                            description = "Solicitud actualizada",
+                                            content = @Content(
+                                                    mediaType = "application/json",
+                                                    examples = @ExampleObject(
+                                                            name = "Respuesta Actualización",
+                                                            value = "{\n" +
+                                                                    "  \"idSolicitud\": 10,\n" +
+                                                                    "  \"monto\": 1500.00,\n" +
+                                                                    "  \"plazo\": 12,\n" +
+                                                                    "  \"email\": \"jhon.doe@crediya.com\",\n" +
+                                                                    "  \"idTipoPrestamo\": 1,\n" +
+                                                                    "  \"documentNumber\": \"77283809\",\n" +
+                                                                    "  \"estado\": \"Aprobado\"\n" +
+                                                                    "}"
+                                                    )
+                                            )
+                                    )
+                            }
+                    )
             )
     })
     RouterFunction<ServerResponse> routerFunction(Handler handler);

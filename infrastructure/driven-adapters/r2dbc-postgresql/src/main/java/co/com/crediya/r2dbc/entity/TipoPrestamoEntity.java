@@ -17,9 +17,10 @@ import java.math.BigDecimal;
 public class TipoPrestamoEntity {
 
     @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     @Column("id_tipo_prestamo")
     private Integer idTipoPrestamo;
+
+    @Column("nombre")
     private String nombre;
 
     @Column("monto_minimo")
