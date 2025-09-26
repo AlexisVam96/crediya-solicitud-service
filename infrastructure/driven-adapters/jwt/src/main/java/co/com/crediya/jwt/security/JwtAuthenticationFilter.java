@@ -13,14 +13,26 @@ import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 @Component
 public class JwtAuthenticationFilter implements WebFilter {
 
     @Autowired
     private ReactiveAuthenticationManager authenticationManager;
 
+    private static final List<String> PUBLIC_PATHS = List.of(
+            "/actuator", "/swagger-ui", "/v3/api-docs", "/webjars"
+    );
+
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
+        String path = exchange.getRequest().getURI().getPath();
+
+        if (PUBLIC_PATHS.stream().anyMatch(path::startsWith)) {
+            return chain.filter(exchange);
+        }
+
         return Mono.justOrEmpty(exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION))
                 .filter(authHeader -> authHeader.startsWith("Bearer "))
                 .switchIfEmpty(chain.filter(exchange).then(Mono.error(new LoanApplicationCustomerException(
